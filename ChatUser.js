@@ -94,8 +94,22 @@ class ChatUser {
     if (msg.type === "join") this.handleJoin(msg.name);
     else if (msg.type === "chat") this.handleChat(msg.text);
     else if (msg.type === "get-joke") await this.handleJoke();
+    else if (msg.type === "get-members") this.getMembers();
     else throw new Error(`bad message: ${msg.type}`);
   }
+
+  /**function to get all of the members in the current users room */
+  getMembers() {
+    const members = Array.from(this.room.members).map(user=>user.name);
+    console.log("MEMBERS", members)
+
+    this.send(JSON.stringify({
+      name: "Server",
+      type: "chat",
+      text: `in room: ${members.join(', ')}`,
+    }));
+  }
+
 
   /** Connection was closed: leave room, announce exit to others. */
 
