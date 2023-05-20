@@ -57,9 +57,23 @@ $("form").submit(function (evt) {
   if ($("#m").val() === "/joke") {
     let data = { type: "get-joke" };
     ws.send(JSON.stringify(data));
+
   } else if ($("#m").val() === "/members") {
     let data = { type: "get-members" };
     ws.send(JSON.stringify(data));
+
+  } else if ($("#m").val().startsWith("/priv")) {
+    console.log("Entered /priv check")
+    const terms = $("#m").val().split(" ");
+    terms.splice(0, 1);
+    let data = {
+      type: "private",
+      username: terms.splice(0, 1)[0],
+      text: terms.join(" ")
+    };
+    console.log("data", data)
+    ws.send(JSON.stringify(data));
+
   } else {
     let data = { type: "chat", text: $("#m").val() };
     ws.send(JSON.stringify(data));

@@ -77,6 +77,38 @@ class ChatUser {
     }));
   }
 
+  /** Handle a private message: send to user with 'username'
+   *
+   * @param {string} text
+   * @param {string} username
+   */
+
+  handlePrivateMessage(text, username){
+    console.log(text, username)
+    try{
+      user = this.room.getUser(username);
+
+      user.send({
+        name: this.name,
+        type: "chat",
+        text: text,
+      });
+      this.send({
+        name: this.name,
+        type: "chat",
+        text: text,
+      });
+
+    }catch(err){
+      text = err.message
+
+      this.send({
+        name: "Server",
+        type: "chat",
+        text: text,
+      });
+    }
+  }
 
   /** Handle messages from client:
    *
@@ -95,13 +127,14 @@ class ChatUser {
     else if (msg.type === "chat") this.handleChat(msg.text);
     else if (msg.type === "get-joke") await this.handleJoke();
     else if (msg.type === "get-members") this.getMembers();
+    else if (msg.type === "private") this.handlePrivateMessage(msg.text, msg.username);
     else throw new Error(`bad message: ${msg.type}`);
   }
 
   /**function to get all of the members in the current users room */
   getMembers() {
     const members = Array.from(this.room.members).map(user=>user.name);
-    console.log("MEMBERS", members)
+    //console.log("MEMBERS", members)
 
     this.send(JSON.stringify({
       name: "Server",
@@ -109,7 +142,6 @@ class ChatUser {
       text: `in room: ${members.join(', ')}`,
     }));
   }
-
 
   /** Connection was closed: leave room, announce exit to others. */
 

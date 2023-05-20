@@ -29,6 +29,23 @@ class Room {
     return rooms.get(roomName);
   }
 
+  /** If ChatUser with 'username' exists in this room, return instance of ChatUser
+   *  otherwise throw an error
+   *
+   * @param {string} username
+   */
+  getUser(username) {
+    console.log("entered getUser")
+    for (user of Array.from(this.members)) {
+      if (user.name === username) {
+        console.log("user=",user)
+        return user;
+      }
+    }
+    console.log("did not find user")
+    throw new Error(`User ${username} not found`)
+  }
+
   /** Make a new room, starting with empty set of listeners.
    *
    * @param roomName {string} room name for new room
